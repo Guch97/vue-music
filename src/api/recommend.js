@@ -2,19 +2,15 @@
 // import { commonParams, options } from './config'
 import { commonParams } from './config'
 import axios from 'axios'
-
-const debug = process.env.NODE_ENV !== 'production'
-
+const debug = process.env.NODE_ENV !== 'development'
 export function getRecommend () {
-  // 线上环境地址，同学们根据自己的需要配置修改
-  // const url = debug ? '/api/getTopBanner' : 'http://ustbhuangyi.com/music/api/getTopBanner'
 
+  // 线上环境地址，根据自己的需要配置修改
+  const url = '/api/getTopBanner' 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq.json',
     hostUin: 0,
     needNewCode: 0,
-    inCharset: 'utf8',
-    format: 'json',
     '-': 'recom' + (Math.random() + '').replace('0.', ''),
     data: {
       'comm': { 'ct': 24 },
@@ -40,11 +36,10 @@ export function getRecommend () {
       'focus': { 'module': 'QQMusic.MusichallServer', 'method': 'GetFocus', 'param': {} }
     }
   })
-
-  // return jsonp(url, data, options)
   return axios.get(url, {
     params: data
   }).then((res) => {
+    console.log(res.data)
     return res.data
   })
 }
