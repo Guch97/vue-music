@@ -2,12 +2,10 @@
   <div>排行页面</div>
 </template>
 
-<script>
-export default {
+<script type="text/ecmascript-6">
 
-}
 </script>
 
-<style scoped lang='stylus' rel='stylesheeet/stylus'>
+<style scoped lang="stylus" rel="stylesheet/stylus" type="text/stylus">
 
 </style>

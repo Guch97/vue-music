@@ -1,14 +1,15 @@
 import Vue from 'vue'
-import App from './App'
+import App from './App.vue'
 import router from './router'
-import 'babel-polyfill'
-import fastclick from 'fastclick'
+import 'babel-polyfill';
+import store from './store'
+import fastClick from 'fastclick';
 
 Vue.config.productionTip = false
+fastClick.attach(document.body);
 
-fastclick.attach(document.body)
 new Vue({
-    el: '#app',
     router,
+    store,
     render: h => h(App)
-})
+}).$mount('#app')

@@ -1,14 +1,16 @@
 export const commonParams = {
-    g_tk: 743772513,
-    inCharset: 'utf-8',
+    g_tk: 5381,
+    inCharset: 'utf8',
     outCharset: 'utf-8',
     notice: 0,
     format: 'json',
-}
+    platform: 'yqq.json',
+    hostUin: 0,
+    needNewCode: 0
+};
 
 export const options = {
-    param: 'jsonpCallback',
-}
+    param: 'jsonpCallback'
+};
 
-
-export const ERR_OK = 0
+export const ERR_OK = 0;
