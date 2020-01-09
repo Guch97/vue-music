@@ -4,6 +4,10 @@
       <slot>
       </slot>
     </div>
+    <div class='dots'>
+      <span class='dot' v-for='(item,index) in dotsArray' :key='item.value' 
+      :class='{active:currentPageIndex===index}'></span>
+    </div>
   </div>
 </template>
 <script>
@@ -26,13 +30,17 @@ export default {
    },
    data(){
      return{
-     
-
+       dots:[],
+       currentPageIndex:0,
+       dotsArray:[]
+       
+    
      }
   },
   methods:{
-  _setSliderWidth() {
+    _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
+        console.log(this.children)
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
         for (let i = 0; i < this.children.length; i++) {
@@ -41,29 +49,68 @@ export default {
           child.style.width = sliderWidth + 'px'
           width += sliderWidth
         }
-        if (this.loop) {
+        if (this.loop&&!isResize) {
           width += 2 * sliderWidth
         }
         this.$refs.sliderGroup.style.width = width + 'px'
       },
-       _initSlider() {
-        this.slider = new BScroll(this.$refs.slider, {
-          scrollX: true,
-          scrollY: false,
-          momentum: false,
-          snap: {
-            loop: this.loop,
-            threshold: 0.3,
-            speed: 400
+    _initDos(){
+        this.dots=new Array(this.children)
+        this.dotsArray=this.dots[0]
+      },
+    _initSlider() {
+      this.slider = new BScroll(this.$refs.slider, {
+        scrollX: true,
+        scrollY: false,
+        momentum: false,
+        snap: {
+          loop: this.loop,
+          threshold: 0.3,
+          speed: 400
+        }
+      })
+      this.slider.on('scrollEnd',()=>{
+        //pageIndex第几个子元素
+        let pageIndex=this.slider.getCurrentPage().pageX
+          if(this.loop){
+           pageIndex-=1
           }
-        })
-       }
+          //当前第几个
+          this.currentPageIndex=pageIndex
+          //清除定时器  在进行轮播一次
+          if(this.autoPlay){
+            clearTimeout(this.timer)
+            this._play()
+          }
+      })
+    },
+    _play(){
+      let pageIndex=this.currentPageIndex+1
+      if(this.loop){
+        pageIndex+=1
+      }
+      this.timer=setTimeout(()=>{
+        this.slider.goToPage(pageIndex,0,400)
+      })
+    }
   },
   mounted(){
     setTimeout(()=>{
     this._setSliderWidth(),
+    this._initDos(),
     this._initSlider()
-    },20)
+    if(this.autoPlay){
+        this._play()
+      }
+    },20),
+ 
+    window.addEventListener('resize',()=>{
+        if(!this.slider){
+          return
+        }
+        this._setSliderWidth(true)
+        this.slider.refresh()
+    })
   }
 }
 </script>
