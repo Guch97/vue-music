@@ -5,7 +5,7 @@
       </slot>
     </div>
     <div class='dots'>
-      <span class='dot' v-for='(item,index) in dotsArray' :key='item.value' 
+      <span class='dot' v-for='(item,index) in dots' :key='index' 
       :class='{active:currentPageIndex===index}'></span>
     </div>
   </div>
@@ -32,9 +32,6 @@ export default {
      return{
        dots:[],
        currentPageIndex:0,
-       dotsArray:[]
-       
-    
      }
   },
   methods:{
@@ -47,16 +44,16 @@ export default {
           let child = this.children[i]
           addClass(child, 'slider-item')
           child.style.width = sliderWidth + 'px'
-          width += sliderWidth
+          width += sliderWidth      //容器的总宽度
         }
         if (this.loop&&!isResize) {
-          width += 2 * sliderWidth
+          width += 2 * sliderWidth  //如果轮播，左右会各增加一个，所以要加上两张图片的宽度  
         }
-        this.$refs.sliderGroup.style.width = width + 'px'
+        this.$refs.sliderGroup.style.width = width + 'px'   //为元素设置容器的总宽度
       },
     _initDos(){
-        this.dots=new Array(this.children)
-        this.dotsArray=this.dots[0]
+        this.dots=new Array(this.children.length)
+        console.log(this.dots)
       },
     _initSlider() {
       this.slider = new BScroll(this.$refs.slider, {
@@ -69,32 +66,41 @@ export default {
           speed: 400
         }
       })
-      this.slider.on('scrollEnd',()=>{
-        //pageIndex第几个子元素
-        let pageIndex=this.slider.getCurrentPage().pageX
-          if(this.loop){
-           pageIndex-=1
-          }
-          //当前第几个
-          this.currentPageIndex=pageIndex
-          //清除定时器  在进行轮播一次
-          if(this.autoPlay){
+      this.slider.on('scrollEnd', () => {
+          let pageIndex = this.slider.getCurrentPage().pageX
+          // if (this.loop) {            //旧版本设置方式，新版本不需要
+          //   pageIndex -= 1
+          // }
+          this.currentPageIndex = pageIndex
+          if (this.autoPlay) {
             clearTimeout(this.timer)
             this._play()
           }
-      })
-    },
-    _play(){
-      let pageIndex=this.currentPageIndex+1
-      if(this.loop){
-        pageIndex+=1
+        })
+        
+        this.slider.on('tocuhEnd', () => {
+          if (this.autoPlay) {
+            this._play()
+          }
+        }),
+         // 是否派发列表滚动开始的事件
+        this.slider.on('beforeScrollStart', () => {
+          if (this.autoPlay) {
+            clearTimeout(this.timer)
+          }
+        })
+     },
+     _play() {
+        // let pageIndex = this.currentPageIndex + 1   //旧版本需要计算增加的两张图片带来的影响
+        // if (this.loop) {
+        //   pageIndex += 1
+        // }
+        this.timer = setTimeout(() => {
+           this.slider.next()
+        }, this.interval)
       }
-      this.timer=setTimeout(()=>{
-        this.slider.goToPage(pageIndex,0,400)
-      })
-    }
-  },
-  mounted(){
+      },
+    mounted(){
     setTimeout(()=>{
     this._setSliderWidth(),
     this._initDos(),
@@ -103,15 +109,29 @@ export default {
         this._play()
       }
     },20),
- 
-    window.addEventListener('resize',()=>{
-        if(!this.slider){
+
+      window.addEventListener('resize', () => {
+        if (!this.slider ) {
           return
         }
         this._setSliderWidth(true)
         this.slider.refresh()
-    })
-  }
+        // clearTimeout(this.resizeTimer)
+        // this.resizeTimer = setTimeout(() => {
+        //   if (this.slider.isInTransition) {
+        //     this._onScrollEnd()
+        //   } else {
+        //     if (this.autoPlay) {
+        //       this._play()
+        //     }
+        //   }
+        //   this.refresh()
+        // }, 60)
+      })
+  },
+   destroyed() {
+      clearTimeout(this.timer)
+    },
 }
 </script>
 

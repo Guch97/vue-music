@@ -38,3 +38,23 @@ export function getRecommend() {
         return res.data
     })
 }
+
+
+
+export function getDisclist(){
+ const url = '/api/getDisclist'
+ const data=Object.assign({},commonParams, {
+      platform: 'yqq',
+      sin: 0,
+      ein: 29,
+      sortId: 5,
+      categoryId: 10000000,
+      rnd: Math.random(),
+      inCharset: 'utf-8',
+ })
+    return axios.get(url, {
+       params: data
+    }).then((res) => {
+      return res.data
+  })
+}
