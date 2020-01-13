@@ -1,13 +1,13 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll class="recommend-content" :data=discList>
+    <scroll class="recommend-content" :data=discList ref='scroll'>
       <div>
         <div v-if="recommends.length" class="slider-wrapper">
           <div class="slider-content">
             <slider ref="slider">
               <div v-for="item in recommends" :key='item.id'>
                 <a :href="item.linkUrl">
-                  <img  :src="item.picUrl">
+                  <img  @load="loadimage" :src="item.picUrl">
                 </a>
               </div>
             </slider>
@@ -18,7 +18,7 @@
           <ul>
             <li v-for="item in discList" class='item' :key='item.index'>
               <div class='icon'>
-                  <img :src="item.imgurl" width='60'  :height="60">
+                  <img v-lazy="item.imgurl" width='60'  :height="60">
               </div>
               <div class='text'>
                 <h2 class='name' v-html="item.creator.name"></h2>
@@ -28,11 +28,15 @@
           </ul>
         </div>  
       </div>
+      <div class='loading-container' v-show='!discList.length'>
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Loading from 'base/loading/loading'
   import Slider from 'base/slider/slider'
   import Scroll from 'base/scroll/scroll'
   import {getRecommend,getDisclist} from 'api/recommend'
@@ -47,9 +51,12 @@
       }
     },
     created() {
-      this._getRecommend(),
+      //让歌单列表先渲染  保证DOM渲染 调用计算高度refresh
+     
+      this._getRecommend()
+      setTimeout(()=>{
       this._getDisclist()
-
+      },1000)
     },
   
     methods: {
@@ -66,9 +73,16 @@
           this.discList=res.data.list
           }
         })
+      },
+      loadimage(){
+        if(!this.checkLoaded){
+           this.$refs.scroll.refresh()
+           this.checkLoaded=true
+        }
       }
     },
     components: {
+      Loading,
       Slider,
       Scroll
     }
