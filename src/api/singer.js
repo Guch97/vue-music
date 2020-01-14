@@ -1,10 +1,11 @@
-import { commonParams } from './config'
 import axios from 'axios'
+import {commonParams} from './config'
 
-export function getSingerList(){
+export function getSingerList() {
   const url = '/api/getSingerList'
+
   const data = Object.assign({}, commonParams, {
-    '-': 'getUCGI0976946741398772',
+    '-': 'getUCGI' + (Math.random() + '').replace('0.', ''),
     loginUin: 0,
     data: {
       'comm':{ 'ct':24, 'cv':0 },
@@ -22,9 +23,11 @@ export function getSingerList(){
       }
     }
   })
-    return axios.get(url, {
-      params: data
-    }).then((res) => {
-      return res.data
-  })
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    console.log(res)
+    return res.data
+})
 }
