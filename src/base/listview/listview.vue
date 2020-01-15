@@ -117,12 +117,9 @@ created () {
     diff(newVal){
       let fixedTop=(newVal>0&&newVal<TITLE_HEIGHT)?newVal-TITLE_HEIGHT:0
         //计算出fixedTop不需要改变直接return
-        if(this.fixedTop=fixedTop){
+        if(this.fixedTop===fixedTop){
           return
         }
-        // if(fixedTop===0){
-        //     return
-        // }
         this.fixedTop=fixedTop
         this.$refs.fixed.style.transform=`translate3d(0,${fixedTop}px,0)`
     }
