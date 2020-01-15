@@ -62,20 +62,20 @@ module.exports = {
               });
             });
             //歌手列表
-            app.get('/api/getSingerList', (req, res) => {
-              const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
-              axios.get(url, {
-                headers: {
-                  referer:'https://u.y.qq.com/',
-                  host: 'u.y.qq.com'
-                },
-                params: req.query
-              }).then((response) => {
-                res.json(response.data);
-              }).catch((e) => {
-                console.log(e);
-              });
-            })
+            // app.get('/api/getSingerList', (req, res) => {
+            //   const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
+            //   axios.get(url, {
+            //     headers: {
+            //       referer:'https://u.y.qq.com/',
+            //       host: 'u.y.qq.com'
+            //     },
+            //     params: req.query
+            //   }).then((response) => {
+            //     res.json(response.data);
+            //   }).catch((e) => {
+            //     console.log(e);
+            //   });
+            // })
         },
     },
     chainWebpack: (config) => {

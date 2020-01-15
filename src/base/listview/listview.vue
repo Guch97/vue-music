@@ -3,32 +3,79 @@
     class="list-view"
     :data="data"
     ref="listView"
-  >
+    :probeType=probeType
+    :listenScroll=listenScroll
+    @scroll='scroll'
+    >
     <ul>
-        <li v-for="group in data" :key="group.title" class="list-group" ref="listGroup">
-          <h2 class="list-group-title">{{group.title}}</h2>
-          <ul>
-            <li
-              v-for="item in group.items"
-              :key="item.id"
-              class="list-group-item"
-            >
-              <img v-lazy="item.avatar" class="avatar" />
-              <span>{{item.name}}</span>
-            </li>
-          </ul>
-        </li>
+      <li v-for="group in data" :key="group.title" class="list-group" ref="listGroup">
+        <h2 class="list-group-title">{{group.title}}</h2>
+        <ul>
+          <li
+            v-for="item in group.items"
+            :key="item.id"
+            class="list-group-item"
+          >
+            <img v-lazy="item.avatar" class="avatar" />
+            <span>{{item.name}}</span>
+          </li>
+        </ul>
+      </li>
     </ul>
+    <!--右侧快速入口-->
+    <div class='list-shortcut' @touchstart='onShortcutTouchStart'>
+      <ul>
+        <li v-for='(item,index) in shortcutList'
+         :key='item.title'
+         :class='{current:currentIndex===index}'
+         class='item' 
+         :data-index='index'>
+          {{item}}
+        </li>
+      </ul>
+    </div>
+    <div class='list-fixed' v-show='fixtitle' ref='fixed'>
+      <h1 class='fixed-title'>{{fixtitle}}</h1>
+    </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div>  
   </scroll>
 </template>
 
 <script type="text/ecmascript-6">
 import Scroll from 'base/scroll/scroll';
+import {getData} from 'common/js/dom'
+import Loading from 'base/loading/loading'
 
+//一个锚点高度
+const ANCHOR_HEIGHT=18
+
+//一行固定标题的高度
+const TITLE_HEIGHT=30
 
 export default {
-  
-
+created () {
+    this.touch={}
+    this.listenScroll=true
+    this.listHeight=[]
+    this.probeType=3
+  },
+  computed:{
+    //右侧快速入口
+    shortcutList(){
+      return this.data.map((group)=>{
+        return group.title.substr(0,1)
+      })
+    },
+    //滚动固定标题
+    fixtitle(){
+      if(this.scrollY>0){
+        return ''
+      }
+      return this.data[this.currentIndex]?this.data[this.currentIndex].title:''
+    }
+  },
   props: {
     data: {
       type: Array,
@@ -37,24 +84,98 @@ export default {
       }
     }
   },
+  watch:{
+    data(){
+      setTimeout(()=>{
+        this._calculateHeight()
+      },20)
+    },
+    scrollY(newY){
+      const listHeight=this.listHeight
+      //当滚动到顶部 newY>0
+      if(newY>0){
+        this.currentIndex=0
+        return
+      }
+      //中间部分滚动
+      for(let i=0;i<listHeight.length-1;i++){
+        //元素上高度
+        let height1=listHeight[i]
+        console.log('height1',height1)
+        //元素下高度
+        let height2=listHeight[i+1]
+        console.log('height2',height2)
+        if(-newY>=height1&&-newY<height2){
+          this.currentIndex=i
+          this.diff=height2+newY
+          return
+        }
+      }
+      //滚动底部 
+      this.currentIndex=0
+    },
+    diff(newVal){
+      let fixedTop=(newVal>0&&newVal<TITLE_HEIGHT)?newVal-TITLE_HEIGHT:0
+        //计算出fixedTop不需要改变直接return
+        if(this.fixedTop=fixedTop){
+          return
+        }
+        // if(fixedTop===0){
+        //     return
+        // }
+        this.fixedTop=fixedTop
+        this.$refs.fixed.style.transform=`translate3d(0,${fixedTop}px,0)`
+    }
+  },
   data() {
     return {
-      scrollY: -1,
-      currentIndex: 0,
-      diff: -1
+      scrollY:-1,
+      currentIndex:0,
+      diff:-1
     };
   },
-  watch: {
-    data() {
-      setTimeout(() => {
-        
-      }, 20);
+  methods: {
+    //点击滚动
+    onShortcutTouchStart(e){
+      let anchorIndex=getData(e.target,'index')
+      let firstTouch=e.touches[0]
+      this.touch.y1=firstTouch.pageY
+      this.touch.anchorIndex=anchorIndex
+      this._scrollTo(anchorIndex)
     },
+    //目标滚动距离
+    onShortcutTouchMove(e){
+      let firstTouch=e.touches[0]
+      this.touch.y2=firstTouch.pageY
+      let delta=Math.floor((this.touch.y2-this.touch.y1)/ANCHOR_HEIGHT)
+      let anchorIndex=this.touch.anchorIndex+delta
+      this._scrollTo(anchorIndex)
+    },
+    //滚动
+    _scrollTo(index){
+       this.$refs.listView.scrollToElement(this.$refs.listGroup[index],0)
+    },
+    scroll(pos){
+      this.scrollY=pos.y
+    },
+    _calculateHeight(){
+      this.listHeight=[]
+      const list =this.$refs.listGroup
+      let height=0
+      this.listHeight.push(height)
+      for(let i=0;i<list.length;i++){
+        let item=list[i]
+        height+=item.clientHeight
+        this.listHeight.push(height)
+      }
+    }
   },
+
   components: {
     Scroll,
-    }
-  
+    Loading
+    
+  }
 };
 </script>
 
@@ -95,7 +216,7 @@ export default {
       right: 0
       top: 50%
       transform: translateY(-50%)
-      width: 20px
+      width: 25px
       padding: 20px 0
       border-radius: 10px
       text-align: center
@@ -105,7 +226,7 @@ export default {
         padding: 3px
         line-height: 1
         color: $color-text-l
-        font-size: $font-size-small
+        font-size: 14px
         &.current
           color: $color-theme
     .list-fixed
