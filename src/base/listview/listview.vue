@@ -15,6 +15,7 @@
             v-for="item in group.items"
             :key="item.id"
             class="list-group-item"
+            @click="selectItem(item)"
           >
             <img v-lazy="item.avatar" class="avatar" />
             <span>{{item.name}}</span>
@@ -117,10 +118,10 @@ created () {
     diff(newVal){
       let fixedTop=(newVal>0&&newVal<TITLE_HEIGHT)?newVal-TITLE_HEIGHT:0
         //计算出fixedTop不需要改变直接return
-        if(this.fixedTop===fixedTop){
-          return
-        }
-        this.fixedTop=fixedTop
+        // if(this.fixedTop===fixedTop){
+        //   return
+        // }
+        // this.fixedTop=fixedTop
         this.$refs.fixed.style.transform=`translate3d(0,${fixedTop}px,0)`
     }
   },
@@ -165,6 +166,9 @@ created () {
         height+=item.clientHeight
         this.listHeight.push(height)
       }
+    },
+    selectItem(item){
+      this.$emit('select',item)
     }
   },
 

@@ -76,6 +76,21 @@ module.exports = {
             //     console.log(e);
             //   });
             // })
+            //歌手列表详情
+            app.get('/api/getSingerDetail', (req, res) => {
+              const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
+              axios.get(url, {
+                headers: {
+                  referer: 'https://u.y.qq.com/',
+                  host: 'u.y.qq.com'
+                },
+                params: req.query
+              }).then(response => {
+                res.json(response.data);
+              }).catch(e => {
+                console.log(e);
+              });
+            });
         },
     },
     chainWebpack: (config) => {
@@ -83,7 +98,9 @@ module.exports = {
             .set('components', resolve('src/components'))
             .set('common', resolve('src/common'))
             .set('api', resolve('src/api'))
-            .set('base', resolve('src/base'));
+            .set('base', resolve('src/base'))
+            .set('views', resolve('src/views'))
+            .set('store', resolve('src/store'))
     },
     publicPath: ''
 }

@@ -1,6 +1,7 @@
 // import axios from 'axios'
 import {commonParams,options} from './config'
 import jsonp from 'common/js/jsonp'
+import axios from 'axios'
 
 // export function getSingerList() {
 //   const url = '/api/getSingerList'
@@ -49,3 +50,35 @@ export function getSingerList() {
 
   return jsonp(url, data, options)
 }
+
+
+//歌手列表详情
+
+
+export const getSingerDetail = (singerMid) => {
+  const url ='/api/getSingerDetail'
+
+  const params = {
+    ...commonParams,
+    '-': 'getSingerSong29843273505889334',
+    loginUin: 0,
+    data: {
+      'comm':{
+        'ct':24,
+        'cv':0
+      },
+      'singerSongList':{
+        'method':'GetSingerSongList',
+        'param':{
+          'order':1,
+          singerMid,
+          'begin':0,
+          'num':100
+        },
+        'module':'musichall.song_list_server'
+      }
+    }
+  };
+
+  return axios.get(url, {params}).then(res => res.data);
+};

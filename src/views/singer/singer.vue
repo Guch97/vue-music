@@ -1,6 +1,7 @@
 <template>
  <div class="singer" ref="singer">
-    <list-view :data=singers></list-view>
+    <list-view :data='singers' @select="selectSinger"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -9,6 +10,7 @@ import {getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import ListView from 'base/listview/listview'
 import Singer from 'common/js/singer'
+import { mapMutations } from 'vuex';
 
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
@@ -68,18 +70,14 @@ methods: {
           }
       })
     },
-    
-    // _normalizeSinger(listArray){
-    //   let singers=[]
-    //     listArray.singerlist.map((item,index)=>{
-    //         singers.push({
-    //             title: indexMap[index],
-    //             items:item
-    //         })
-    //     })
-    //      return singers
-    // }
-       _normalizeSinger(list) {
+    selectSinger(singer){
+      this.$router.push({
+        path:`/singer/${singer.id}`
+      })
+      // this.$store.commit('SET_SINGER',singer)
+      this.setSinger(singer)
+    },
+    _normalizeSinger(list) {
         let map = {
           hot: {
             title: HOT_NAME,
@@ -120,7 +118,11 @@ methods: {
           return a.title.charCodeAt(0) - b.title.charCodeAt(0)
         })
         return hot.concat(ret)
-      }
+    },
+    //映射  this.$store.commit('SET_SINGER',singer)
+    ...mapMutations({
+      setSinger:'SET_SINGER'
+    })
   }  
 }
 </script>
