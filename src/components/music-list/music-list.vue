@@ -8,8 +8,8 @@
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
-    <scroll :data="songs" >
-      <div class="song-list-wrapper">
+    <scroll :data="songs"  class='list' ref='list' :prpbe-type='probeType'  @scroll="scroll" :listen-scroll='listenScroll'>
+      <div class="song-list-wrapper" >
         <song-list :songs="songs"></song-list>
       </div>
     </scroll>
@@ -19,10 +19,13 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+
+//高度预留位置
+const RESERVED_HEIGHT = 40
 export default {
   data(){
     return{
-      
+      scrollY:0
     }
   },
   components: {
@@ -45,10 +48,48 @@ export default {
       default:''
     }
   },
+  methods: {
+    //滚动位置
+    scroll(pos){
+      console.log(pos)
+      this.scrollY=pos.y
+    }
+    
+  },
   computed: {
      bgStyle() {
         return `background-image:url(${this.bgImage})`
       }
+  },
+  mounted () {
+    this.imageHeight=this.$refs.bgImage.clientHeight
+    //最顶端
+    this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
+    console.log(this.$refs.list)
+    this.$refs.list.$el.style.top=`${this.imageHeight}px`
+  },
+  created () {
+    this.probeType=3
+    this.listenScroll=true
+  },
+  watch: {
+    scrollY(newY){
+      console.log(this.$refs.layer)
+      let zIndex=0
+      let translateY=Math.max(this.minTranslateY,newY)
+      this.$refs.layer.style.transform=`translated3d(0,${translateY}px,0)`
+      // this.$refs.layer.style['transform']=`translated3d(0,${translateY}px,0)` 
+      //滚动到顶部
+      if(newY<this.minTranslateY){
+        zIndex=10
+        this.$refs.bgImage.style.paddingTop=0
+        this.$refs.bgImage.style.height=`${RESERVED_HEIGHT}px`
+      }else{
+        this.$refs.bgImage.style.paddingTop='70%'
+        this.$refs.bgImage.style.height=0
+      }
+      this.$refs.bgImage.style.zIndex=zIndex
+    }
   }
 }
 </script>
