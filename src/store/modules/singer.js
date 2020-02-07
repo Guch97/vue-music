@@ -1,17 +1,16 @@
-const singer={
-  state:{
-    singer:{}
-  },
-  mutations: {
-    SET_SINGER(state,singer){
-      console.log(singer)
-      state.singer=singer
-      
+const singer = {
+    state: {
+        singer: {}
+    },
+    mutations: {
+        SET_SINGER(state, singer) {
+            console.log(singer)
+            state.singer = singer
+        }
+    },
+    actions: {
+
     }
-  },
-  actions: {
-    
-  }
 }
 
-export default  singer
+export default singer

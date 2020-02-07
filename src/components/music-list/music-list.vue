@@ -1,16 +1,25 @@
 <template>
   <div class="music-list">
     <div class="back">
-      <i class="icon-back"></i>
+      <i class="icon-back" @click='comeback'></i>
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class='play-wrapper'>
+        <div class='play' v-show='songs.length>0' ref='playButton'>
+          <i class='icon-play'></i>
+          <span class='text'>随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
-    <scroll :data="songs"  class='list' ref='list' :prpbe-type='probeType'  @scroll="scroll" :listen-scroll='listenScroll'>
+    <scroll :data="songs"  class='list' ref='list' :probe-type='probeType'  @scroll="scroll" :listen-scroll='listenScroll'>
       <div class="song-list-wrapper" >
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="selectItem"></song-list>
+      </div>
+      <div class='loading-container' v-show='!songs.length'>
+        <loading></loading>
       </div>
     </scroll>
   </div>
@@ -19,9 +28,16 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+import {prefixStyle} from 'common/js/dom'
+import Loading from 'base/loading/loading'
+import {mapActions,mapMutations} from 'vuex'
+
 
 //高度预留位置
-const RESERVED_HEIGHT = 40
+const RESERVED_HEIGHT = 70
+ // css封装 
+const transform=prefixStyle('transform')
+const backdrop=prefixStyle('backdrop-filter')
 export default {
   data(){
     return{
@@ -30,7 +46,8 @@ export default {
   },
   components: {
     Scroll,
-    SongList
+    SongList,
+    Loading
   },
   props:{
     bgImage:{
@@ -51,10 +68,21 @@ export default {
   methods: {
     //滚动位置
     scroll(pos){
-      console.log(pos)
       this.scrollY=pos.y
-    }
-    
+    },
+    comeback(){
+      this.$router.back()
+    },
+    selectItem(item,index){
+     
+      this.selectPlay({
+        list:this.songs,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ]),
   },
   computed: {
      bgStyle() {
@@ -65,7 +93,7 @@ export default {
     this.imageHeight=this.$refs.bgImage.clientHeight
     //最顶端
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
-    console.log(this.$refs.list)
+  
     this.$refs.list.$el.style.top=`${this.imageHeight}px`
   },
   created () {
@@ -74,21 +102,44 @@ export default {
   },
   watch: {
     scrollY(newY){
-      console.log(this.$refs.layer)
+      //往上滑动newY是负数    translateY往上移动是负数
+      //没有滑到临界值的时候translateY=newY  滑动顶部70的时候translateY=this.minTranslateY
       let zIndex=0
+      //缩放
+      let scale=1
+      //模糊
+      let blur=0
       let translateY=Math.max(this.minTranslateY,newY)
-      this.$refs.layer.style.transform=`translated3d(0,${translateY}px,0)`
-      // this.$refs.layer.style['transform']=`translated3d(0,${translateY}px,0)` 
+      //比例
+      const percent=Math.abs(newY/this.imageHeight)
+      if(newY>0){
+        scale=1+percent
+        zIndex=10
+      }else{
+        blur=Math.min(20*percent,20)
+      }
+      // this.$refs.layer.style['webkitTransform']=`translate3d(0,${translateY}px,0)`
+      this.$refs.layer.style[transform]=`translate3d(0,${translateY}px,0)` 
+      //IOS    //上滑的时候：高斯模糊
+      // css封装 
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+      // this.$refs.filter.style['webkitBackdrop-filter']=`blur(${blur})px`
       //滚动到顶部
       if(newY<this.minTranslateY){
         zIndex=10
         this.$refs.bgImage.style.paddingTop=0
         this.$refs.bgImage.style.height=`${RESERVED_HEIGHT}px`
+        //按钮消失
+        this.$refs.playButton.style.display='none'
       }else{
         this.$refs.bgImage.style.paddingTop='70%'
         this.$refs.bgImage.style.height=0
+        this.$refs.playButton.style.display=''
       }
       this.$refs.bgImage.style.zIndex=zIndex
+       // css封装 
+      this.$refs.bgImage.style[transform]=`scale(${scale})`
+      // this.$refs.bgImage.style['webkitTransform']=`scale(${scale})` 
     }
   }
 }

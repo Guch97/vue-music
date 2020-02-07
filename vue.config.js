@@ -9,7 +9,9 @@ const resolve = (dir) => {
 module.exports = {
     devServer: {
         before(app) {
-          //轮播图
+            app.use(bodyParser.urlencoded({ extended: true }))
+            const querystring = require('querystring')
+                //轮播图
             app.get('/api/getTopBanner', (req, res) => {
                 const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
                 const jumpPrefix = 'https://y.qq.com/n/yqq/album/';
@@ -26,14 +28,14 @@ module.exports = {
                         const slider = [];
                         const content = response.focus.data && response.focus.data.content;
                         if (content) {
-                          for (let i = 0; i < content.length; i++) {
-                            const item = content[i]
-                            const sliderItem = {}
-                            sliderItem.id = item.id
-                            sliderItem.linkUrl = jumpPrefix + item.jump_info.url + '.html'
-                            sliderItem.picUrl = item.pic_info.url
-                            slider.push(sliderItem)
-                          }
+                            for (let i = 0; i < content.length; i++) {
+                                const item = content[i]
+                                const sliderItem = {}
+                                sliderItem.id = item.id
+                                sliderItem.linkUrl = jumpPrefix + item.jump_info.url + '.html'
+                                sliderItem.picUrl = item.pic_info.url
+                                slider.push(sliderItem)
+                            }
                         }
                         res.json({
                             code: 0,
@@ -48,18 +50,18 @@ module.exports = {
             });
             //歌曲推荐
             app.get('/api/getDiscList', (req, res) => {
-              const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
-              axios.get(url, {
-                headers: {
-                  referer: 'https://c.y.qq.com/',
-                  host: 'c.y.qq.com'
-                },
-                params: req.query
-              }).then((response) => {
-                res.json(response.data);
-              }).catch((e) => {
-                console.log(e);
-              });
+                const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
+                axios.get(url, {
+                    headers: {
+                        referer: 'https://c.y.qq.com/',
+                        host: 'c.y.qq.com'
+                    },
+                    params: req.query
+                }).then((response) => {
+                    res.json(response.data);
+                }).catch((e) => {
+                    console.log(e);
+                });
             });
             //歌手列表
             // app.get('/api/getSingerList', (req, res) => {
@@ -78,19 +80,34 @@ module.exports = {
             // })
             //歌手列表详情
             app.get('/api/getSingerDetail', (req, res) => {
-              const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
-              axios.get(url, {
-                headers: {
-                  referer: 'https://u.y.qq.com/',
-                  host: 'u.y.qq.com'
-                },
-                params: req.query
-              }).then(response => {
-                res.json(response.data);
-              }).catch(e => {
-                console.log(e);
-              });
+                const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
+                axios.get(url, {
+                    headers: {
+                        referer: 'https://u.y.qq.com/',
+                        host: 'u.y.qq.com'
+                    },
+                    params: req.query
+                }).then(response => {
+                    res.json(response.data);
+                }).catch(e => {
+                    console.log(e);
+                });
             });
+            //获取歌手URL播放
+            app.post('/api/getPurlUrl', bodyParser.json(), function(req, res) {
+                const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+                axios.post(url, req.body, {
+                    headers: {
+                        referer: 'https://y.qq.com/',
+                        origin: 'https://y.qq.com',
+                        'Content-type': 'application/x-www-form-urlencoded'
+                    }
+                }).then((response) => {
+                    res.json(response.data)
+                }).catch((e) => {
+                    console.log(e)
+                })
+            })
         },
     },
     chainWebpack: (config) => {

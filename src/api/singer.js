@@ -1,5 +1,5 @@
 // import axios from 'axios'
-import {commonParams,options} from './config'
+import { commonParams, options } from './config'
 import jsonp from 'common/js/jsonp'
 import axios from 'axios'
 
@@ -35,20 +35,20 @@ import axios from 'axios'
 // }
 //歌手列表API 
 export function getSingerList() {
-  const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
-  
-  const data = Object.assign({}, commonParams, {
-    channel: 'singer',
-    page: 'list',
-    key: 'all_all_all',
-    pagesize: 100,
-    pagenum: 1,
-    hostUin: 0,
-    needNewCode: 0,
-    platform: 'yqq'
-  })
+    const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
 
-  return jsonp(url, data, options)
+    const data = Object.assign({}, commonParams, {
+        channel: 'singer',
+        page: 'list',
+        key: 'all_all_all',
+        pagesize: 100,
+        pagenum: 1,
+        hostUin: 0,
+        needNewCode: 0,
+        platform: 'yqq'
+    })
+
+    return jsonp(url, data, options)
 }
 
 
@@ -56,29 +56,29 @@ export function getSingerList() {
 
 
 export const getSingerDetail = (singerMid) => {
-  const url ='/api/getSingerDetail'
+    const url = '/api/getSingerDetail'
 
-  const params = {
-    ...commonParams,
-    '-': 'getSingerSong29843273505889334',
-    loginUin: 0,
-    data: {
-      'comm':{
-        'ct':24,
-        'cv':0
-      },
-      'singerSongList':{
-        'method':'GetSingerSongList',
-        'param':{
-          'order':1,
-          singerMid,
-          'begin':0,
-          'num':100
-        },
-        'module':'musichall.song_list_server'
-      }
-    }
-  };
+    const params = {
+        ...commonParams,
+        '-': 'getSingerSong29843273505889334',
+        loginUin: 0,
+        data: {
+            'comm': {
+                'ct': 24,
+                'cv': 0
+            },
+            'singerSongList': {
+                'method': 'GetSingerSongList',
+                'param': {
+                    'order': 1,
+                    singerMid,
+                    'begin': 0,
+                    'num': 100
+                },
+                'module': 'musichall.song_list_server'
+            }
+        }
+    };
 
-  return axios.get(url, {params}).then(res => res.data);
+    return axios.get(url, { params }).then(res => res.data);
 };

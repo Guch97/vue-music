@@ -9,7 +9,7 @@
 <script>
 import MusicList from 'components/music-list/music-list'
 import {mapGetters} from 'vuex'
-import {createSong} from 'common/js/song'
+import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
 import { getSingerDetail } from 'api/singer';
 import {ERR_OK} from 'api/config'
 export default {
@@ -27,7 +27,7 @@ export default {
 
   computed: {
     title(){
-      console.log(this.singer.name)
+    
       return  this.singer.name
     },
     bgImage(){
@@ -40,22 +40,33 @@ export default {
     ])
   },
   methods: {
-    _getDetail(){
-        getSingerDetail(this.singer.id).then(res=>{
-            if(res.code === ERR_OK) {
-              this.songs = this._normalizeSongs(res.singerSongList.data.songList);
-              console.log(this.songs)
+  _getDetail() {
+        if (!this.singer.id) {
+          this.$router.push('/singer')
+          return
+        }
+        getSingerDetail(this.singer.id).then((res) => {
+          if (res.code === ERR_OK) {
+            // this.songs = this._normalizeSongs(res.data.list)
+            console.log(res)
+            processSongsUrl(this._normalizeSongs(res.singerSongList.data.songList)).then((songs) => {
+              this.songs = songs
+            })
           }
-      })
-    },
-    _normalizeSongs(list){
-      return list.map((item,index)=>{
-         if(item.songInfo.id&&item.songInfo.mid){
-            return createSong(item.songInfo)
-          }
-            return{}
-      })
-    }
+        })
+      },
+      _normalizeSongs(list) {
+          debugger
+          let ret = []
+          console.log(list)
+          list.forEach((item) => {
+            let {musicData} = item
+            if (isValidMusic(musicData)) {
+              ret.push(createSong(musicData))
+            }
+          })
+          return ret
+      }
   }
 }
 </script>
