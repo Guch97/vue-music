@@ -1,54 +1,44 @@
 <template>
-  <transition name='slide'>
-    <music-list :songs='songs' :title='title' :bg-image='bgImage'></music-list>
-    <!-- <div class='singer-detail'>
-    </div> -->
-  </transition>  
+  <transition appear name="slide">
+    <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
+  </transition>
 </template>
 
-<script>
-import MusicList from 'components/music-list/music-list'
-import {mapGetters} from 'vuex'
-import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
-import { getSingerDetail } from 'api/singer';
-import {ERR_OK} from 'api/config'
-export default {
-  data() {
-    return {
-      songs: []
-    };
-  },
-  components: {
-    MusicList
-  },
-  created() {
-    this._getDetail();
-  },
+<script type="text/ecmascript-6">
+  import MusicList from 'components/music-list/music-list'
+  import { getSingerDetail } from 'api/singer'
+  import { ERR_OK } from 'api/config'
+  import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
+  import { mapGetters } from 'vuex'
 
-  computed: {
-    title(){
-    
-      return  this.singer.name
+  export default {
+    computed: {
+      title() {
+        return this.singer.name
+      },
+      bgImage() {
+        return this.singer.avatar
+      },
+      ...mapGetters([
+        'singer'
+      ])
     },
-    bgImage(){
-      return this.singer.avatar
+    data() {
+      return {
+        songs: []
+      }
     },
-    //映射 this.singer 为 store.getters.singer
-    ...mapGetters([
-      'singer'
-    
-    ])
-  },
-  methods: {
-  _getDetail() {
+    created() {
+      this._getDetail()
+    },
+    methods: {
+      _getDetail() {
         if (!this.singer.id) {
           this.$router.push('/singer')
           return
         }
         getSingerDetail(this.singer.id).then((res) => {
           if (res.code === ERR_OK) {
-            // this.songs = this._normalizeSongs(res.data.list)
-            console.log(res)
             processSongsUrl(this._normalizeSongs(res.singerSongList.data.songList)).then((songs) => {
               this.songs = songs
             })
@@ -56,27 +46,27 @@ export default {
         })
       },
       _normalizeSongs(list) {
-          debugger
-          let ret = []
-          console.log(list)
-          list.forEach((item) => {
-            let {musicData} = item
-            if (isValidMusic(musicData)) {
-              ret.push(createSong(musicData))
-            }
-          })
-          return ret
+        let ret = []
+        list.forEach((item) => {
+          let {songInfo} = item
+          if (isValidMusic(songInfo)) {
+            ret.push(createSong(songInfo))
+       
+          }
+        })
+        return ret
       }
+    },
+    components: {
+      MusicList
+    }
   }
-}
 </script>
 
-<style scoped type="text/stylus" lang="stylus" ref="stylesheet/stylus">
-  @import '~common/stylus/variable.styl';
-
-
+<style scoped lang="stylus" rel="stylesheet/stylus">
   .slide-enter-active, .slide-leave-active
     transition: all 0.3s
+
   .slide-enter, .slide-leave-to
     transform: translate3d(100%, 0, 0)
 </style>

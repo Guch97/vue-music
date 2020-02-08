@@ -105,10 +105,10 @@ export default {
    //映射 this.fullScreen 为 store.getters.fullScreen
    computed:{
      playIcon(){
-       return this.playging?'icon-pause':'icon-play'
+       return this.playing?'icon-pause':'icon-play'
      },
      minIcon(){
-        return this.playging?'icon-pause-mini':'icon-play-mini'
+        return this.playing?'icon-pause-mini':'icon-play-mini'
      },
      cdCls(){
        return this.playing?'play':'play pause'
@@ -135,7 +135,8 @@ watch:{
        this.$refs.audio.play()
     })
   },
-  playging(newVal){
+  //暂停播放
+  playing(newVal){
     const audio=this.$refs.audio
      this.$nextTick(()=>{
          newVal?audio.play():audio.pause()
@@ -167,7 +168,7 @@ methods: {
       index=0
     }
     this.setCurrentIndex(index)
-    if(!this.playging){
+    if(!this.playing){
       this.togglePlaying()
     }
     this.songReady=false
@@ -200,7 +201,6 @@ methods: {
   //补零
   _pad(num,n=2){
       let len =num.toString().length
-      console.log(len)
       while(len<n){
         num='0'+num
         len++
@@ -214,7 +214,7 @@ methods: {
      this.setFullScreen(true)
   },
   togglePlaying(){
-    this.setPlayingState(!this.playging)
+    this.setPlayingState(!this.playing)
   },
   //获得初始位置
   _getPosAndScale(){

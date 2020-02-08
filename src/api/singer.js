@@ -33,10 +33,9 @@ import axios from 'axios'
 //     return res.data
 // })
 // }
-//歌手列表API 
+//歌手列表
 export function getSingerList() {
     const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
-
     const data = Object.assign({}, commonParams, {
         channel: 'singer',
         page: 'list',
@@ -47,13 +46,11 @@ export function getSingerList() {
         needNewCode: 0,
         platform: 'yqq'
     })
-
     return jsonp(url, data, options)
 }
 
 
 //歌手列表详情
-
 
 export const getSingerDetail = (singerMid) => {
     const url = '/api/getSingerDetail'

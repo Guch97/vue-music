@@ -1,6 +1,8 @@
 <template>
+<!--进度条总长度-->
 <div class='progress-bar' ref='progressBar'>
    <div class='bar-inner'>
+     <!--黄色进度条-->
       <div class='progress' ref='progress'></div>
       <!--按钮当前位置-->
       <div class="progress-btn-wrapper" ref="progressBtn"
@@ -50,8 +52,6 @@ export default {
         this.touch.startX=e.touches[0].pageX
         //存储当前黄色进度条宽度
         this.touch.left=this.$refs.progress.clientWidth
-        this.touch.AAA=this.$refs.progress.clientWidth
-        console.log(this.touch.AAA)
     },
     //纵向偏移量
     progresssTouchMove(e){
@@ -76,7 +76,7 @@ export default {
      //触发重新计算百分比事件
     _triggerPercent(){
         const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
-        //当前位置/黄色进度条总长度
+        //当前位置/进度条总长度
         const percent=this.$refs.progress.clientWidth/barWidth
         console.log(percent)
         this.$emit('percentChange',percent)

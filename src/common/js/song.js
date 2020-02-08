@@ -31,6 +31,7 @@ export default class Song {
 }
 
 export function createSong(musicData) {
+
     const { id, mid, singer, name, album, interval, url } = musicData
     return new Song({
         id,
@@ -59,8 +60,9 @@ function filterSinger(singer) {
 }
 
 export function isValidMusic(musicData) {
-    console.log(musicData)
-        // return musicData.id && musicData.albummid.mid && (!musicData.pay || musicData.pay.payalbumprice === 0)
+
+
+    return musicData.id && musicData.album.mid && (!musicData.pay || musicData.pay.price_album === 0)
 }
 
 

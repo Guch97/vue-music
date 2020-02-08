@@ -16,20 +16,15 @@ const play = {
     mutations: {
         SET_PLAYING_STATE(state, flag) {
             state.playing = flag
-
         },
         SET_FULL_SCREEN(state, flag) {
             state.fullScreen = flag
-
         },
         SET_PLAYLIST(state, list) {
             state.playlist = list
-
-
         },
         SET_SEQUENCE_LIST(state, list) {
             state.sequenceList = list
-
         },
         SET_PLAY_MODE(state, mode) {
             state.mode = mode
