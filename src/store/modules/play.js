@@ -1,4 +1,6 @@
 import { playMode } from 'common/js/config'
+import { shuffle } from '../../common/js/utils'
+
 
 const play = {
     state: {
@@ -25,6 +27,7 @@ const play = {
         },
         SET_SEQUENCE_LIST(state, list) {
             state.sequenceList = list
+
         },
         SET_PLAY_MODE(state, mode) {
             state.mode = mode
@@ -33,14 +36,31 @@ const play = {
         SET_CURRENT_INDEX(state, index) {
             state.currentIndex = index
         },
-        //获取播放url Vkey
+
 
     },
     actions: {
+        //选择列表播放
         selectPlay({ commit, state }, { list, index }) {
             commit('SET_SEQUENCE_LIST', list)
-            commit('SET_PLAYLIST', list)
+            if (state.mode === playMode.random) {
+                let randomList = shuffle(list)
+                commit('SET_PLAYLIST', randomList)
+                index = findIndex(randomList, list[index])
+            } else {
+                commit('SET_PLAYLIST', list)
+            }
             commit('SET_CURRENT_INDEX', index)
+            commit('SET_FULL_SCREEN', true)
+            commit('SET_PLAYING_STATE', true)
+        },
+        //随机播放
+        randomPlay({ commit }, { list }) {
+            commit('SET_PLAY_MODE,', playMode.RANDOM)
+            commit('SET_SEQUENCE_LIST', list)
+            let randomList = shuffle(list)
+            commit('SET_PLAYLIST', randomList)
+            commit('SET_CURRENT_INDEX', 0)
             commit('SET_FULL_SCREEN', true)
             commit('SET_PLAYING_STATE', true)
         }
@@ -48,3 +68,10 @@ const play = {
 }
 
 export default play
+
+
+function findIndex(list, song) {
+    return list.findIndex((item) => {
+        return item.id === song.id
+    })
+}

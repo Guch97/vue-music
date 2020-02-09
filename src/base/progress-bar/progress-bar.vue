@@ -1,6 +1,6 @@
 <template>
 <!--进度条总长度-->
-<div class='progress-bar' ref='progressBar'>
+<div class='progress-bar' ref='progressBar' @click='progressClick'>
    <div class='bar-inner'>
      <!--黄色进度条-->
       <div class='progress' ref='progress'></div>
@@ -67,6 +67,14 @@ export default {
         this.touch.initiated=false
         //保持 拖动与进度条一致  触发重新计算百分比事件
         this._triggerPercent()
+    },
+    progressClick(e){
+      //鼠标相对于事件源元素（srcElement）的X,Y坐标  
+      // this._offset(e.offsetX)   //当点击到按钮时e.offsetX错误
+      const rect=this.$refs.progressBar.getBoundingClientRect() //获取元素相对于视窗的位置
+      const offsetWidth=e.pageX-rect
+      this._offset(offsetWidth)
+      this._triggerPercent()
     },
     //设置按钮偏移量
     _offset(offsetWidth){
