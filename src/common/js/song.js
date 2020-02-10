@@ -3,23 +3,25 @@ import { ERR_OK } from 'api/config'
 import { Base64 } from 'js-base64'
 export default class Song {
     constructor({ id, mid, singer, name, album, duration, image, url }) {
-        this.id = id
-        this.mid = mid
-        this.singer = singer
-        this.name = name
-        this.album = album
-        this.duration = duration
-        this.image = image
-        this.filename = `C400${this.mid}.m4a`
-        this.url = url
-    }
-    getLyric() {
+            this.id = id
+            this.mid = mid
+            this.singer = singer
+            this.name = name
+            this.album = album
+            this.duration = duration
+            this.image = image
+            this.filename = `C400${this.mid}.m4a`
+            this.url = url
+        }
+        //获取歌词
+    getSongLyric() {
         if (this.lyric) {
             return Promise.resolve(this.lyric)
         }
         return new Promise((resolve, reject) => {
             getLyric(this.mid).then((res) => {
                 if (res.retcode === ERR_OK) {
+                    //返回数据的是 base64 的字符串，需要解码，这里用到了第三方库: js-base64
                     this.lyric = Base64.decode(res.lyric)
                     resolve(this.lyric)
                 } else {
@@ -31,7 +33,6 @@ export default class Song {
 }
 
 export function createSong(musicData) {
-
     const { id, mid, singer, name, album, interval, url } = musicData
     return new Song({
         id,
@@ -60,8 +61,6 @@ function filterSinger(singer) {
 }
 
 export function isValidMusic(musicData) {
-
-
     return musicData.id && musicData.album.mid && (!musicData.pay || musicData.pay.price_album === 0)
 }
 

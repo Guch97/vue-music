@@ -72,7 +72,7 @@ export default {
       //鼠标相对于事件源元素（srcElement）的X,Y坐标  
       // this._offset(e.offsetX)   //当点击到按钮时e.offsetX错误
       const rect=this.$refs.progressBar.getBoundingClientRect() //获取元素相对于视窗的位置
-      const offsetWidth=e.pageX-rect
+      const offsetWidth=e.pageX - rect.left
       this._offset(offsetWidth)
       this._triggerPercent()
     },

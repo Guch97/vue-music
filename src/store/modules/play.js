@@ -56,7 +56,7 @@ const play = {
         },
         //随机播放
         randomPlay({ commit }, { list }) {
-            commit('SET_PLAY_MODE,', playMode.RANDOM)
+            commit('SET_PLAY_MODE,', playMode.random)
             commit('SET_SEQUENCE_LIST', list)
             let randomList = shuffle(list)
             commit('SET_PLAYLIST', randomList)

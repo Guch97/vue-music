@@ -3,11 +3,10 @@ import { getUid } from 'common/js/uid'
 import axios from 'axios'
 import { ERR_OK } from 'api/config'
 
-const debug = process.env.NODE_ENV !== 'production'
 
+//获取歌词
 export function getLyric(mid) {
-    const url = debug ? '/api/lyric' : 'http://ustbhuangyi.com/music/api/lyric'
-
+    const url = '/api/lyric'
     const data = Object.assign({}, commonParams, {
         songmid: mid,
         platform: 'yqq',
@@ -17,7 +16,6 @@ export function getLyric(mid) {
         pcachetime: +new Date(),
         format: 'json'
     })
-
     return axios.get(url, {
         params: data
     }).then((res) => {
@@ -25,20 +23,19 @@ export function getLyric(mid) {
     })
 }
 
+
+
+//获取歌曲播放URL
 export function getSongsUrl(songs) {
     //   const url = debug ? '/api/getPurlUrl' : 'http://ustbhuangyi.com/music/api/getPurlUrl'
     const url = '/api/getPurlUrl'
-
     let mids = []
     let types = []
-
     songs.forEach((song) => {
         mids.push(song.mid)
         types.push(0)
     })
-
     const urlMid = genUrlMid(mids, types)
-
     const data = Object.assign({}, commonParams, {
         g_tk: 5381,
         format: 'json',
@@ -55,7 +52,6 @@ export function getSongsUrl(songs) {
                 comm: data,
                 req_0: urlMid
             }).then((response) => {
-
                 const res = response.data
                 if (res.code === ERR_OK) {
                     let urlMid = res.req_0
@@ -87,7 +83,6 @@ export function getSongsUrl(songs) {
                 reject(new Error('Can not get the songs url'))
             }
         }
-
         request()
     })
 }

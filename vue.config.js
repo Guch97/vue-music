@@ -15,7 +15,6 @@ module.exports = {
             app.get('/api/getTopBanner', (req, res) => {
                 const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
                 const jumpPrefix = 'https://y.qq.com/n/yqq/album/';
-
                 axios.get(url, {
                     headers: {
                         referer: 'https://u.y.qq.com/',
@@ -95,19 +94,42 @@ module.exports = {
             });
             //获取歌手URL播放
             app.post('/api/getPurlUrl', bodyParser.json(), function(req, res) {
-                const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
-                axios.post(url, req.body, {
-                    headers: {
-                        referer: 'https://y.qq.com/',
-                        origin: 'https://y.qq.com',
-                        'Content-type': 'application/x-www-form-urlencoded'
-                    }
-                }).then((response) => {
-                    res.json(response.data)
-                }).catch((e) => {
-                    console.log(e)
+                    const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+                    axios.post(url, req.body, {
+                        headers: {
+                            referer: 'https://y.qq.com/',
+                            origin: 'https://y.qq.com',
+                            'Content-type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then((response) => {
+                        res.json(response.data)
+                    }).catch((e) => {
+                        console.log(e)
+                    })
                 })
-            })
+                //获取歌词
+            app.get('/api/lyric', (req, res) => {
+                const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+                axios.get(url, {
+                    headers: {
+                        referer: 'https://u.y.qq.com/',
+                        host: 'u.y.qq.com'
+                    },
+                    params: req.query
+                }).then(response => {
+                    var ret = response.data
+                    if (typeof ret === 'string') {
+                        var reg = /^\w+\(({[^()]+})\)$/
+                        var mathes = ret.match(reg)
+                        if (mathes) {
+                            ret = JSON.parse(mathes[1])
+                        }
+                    }
+                    res.json(response.data);
+                }).catch(e => {
+                    console.log(e);
+                });
+            });
         },
     },
     chainWebpack: (config) => {
