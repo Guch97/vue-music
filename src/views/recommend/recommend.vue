@@ -41,9 +41,10 @@
   import Scroll from 'base/scroll/scroll'
   import {getRecommend,getDisclist} from 'api/recommend'
   import {ERR_OK} from 'api/config'
+  import {playlistMixin} from 'common/js/mixin.js'
   
-
   export default {
+    mixins:[playlistMixin],
     data() {
       return {
         recommends: [],
@@ -52,7 +53,6 @@
     },
     created() {
       //让歌单列表先渲染  保证DOM渲染 调用计算高度refresh
-     
       this._getRecommend()
       setTimeout(()=>{
       this._getDisclist()
@@ -60,6 +60,12 @@
     },
   
     methods: {
+      handlePlaylist(playlist){
+       const bottom=playlist.length>0?'60px':''
+        this.$refs.recommend.style.bottom=bottom
+        this.$refs.scroll.refresh()
+      
+       },
       _getRecommend() {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {

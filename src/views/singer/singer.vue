@@ -1,6 +1,6 @@
 <template>
  <div class="singer" ref="singer">
-    <list-view :data='singers' @select="selectSinger"></list-view>
+    <list-view @select="selectSinger" :data="singers" ref="list"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +11,7 @@ import {ERR_OK} from 'api/config'
 import ListView from 'base/listview/listview'
 import Singer from 'common/js/singer'
 import { mapMutations } from 'vuex';
+import {playlistMixin} from 'common/js/mixin.js'
 
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
@@ -48,7 +49,9 @@ const HOT_NAME = '热门'
 // };
 
 export default {
-components: {
+  //定义一部分公共的方法或者计算属性,然后混入到各个组件中使用,方便管理与统一修改
+  mixins:[playlistMixin],
+  components: {
   ListView
     
   },
@@ -61,6 +64,12 @@ created(){
        this._getSingerList()
   },
 methods: {
+    handlePlaylist(playlist){
+       const bottom=playlist.length>0?'60px':''
+        this.$refs.singer.style.bottom=bottom
+        // this.$refs.list.listViewrefresh()
+        this.$refs.list.refresh()
+    },
     _getSingerList(){
       getSingerList().then((res)=>{
             if (res.code === ERR_OK) {

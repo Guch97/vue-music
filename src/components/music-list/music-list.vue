@@ -31,6 +31,7 @@ import SongList from 'base/song-list/song-list'
 import {prefixStyle} from 'common/js/dom'
 import Loading from 'base/loading/loading'
 import {mapActions,mapMutations} from 'vuex'
+import {playlistMixin} from 'common/js/mixin.js'
 
 
 //高度预留位置
@@ -38,7 +39,10 @@ const RESERVED_HEIGHT = 70
  // css封装 
 const transform=prefixStyle('transform')
 const backdrop=prefixStyle('backdrop-filter')
+
 export default {
+  //定义一部分公共的方法或者计算属性,然后混入到各个组件中使用,方便管理与统一修改
+  mixins:[playlistMixin],
   data(){
     return{
       scrollY:0
@@ -66,6 +70,11 @@ export default {
     }
   },
   methods: {
+    handlePlaylist(playlist){
+        const bottom=playlist.length>0?'60px':''
+        this.$refs.list.$el.style.bottom=bottom
+        this.$refs.list.refresh()
+    },
     //滚动位置
     scroll(pos){
       this.scrollY=pos.y

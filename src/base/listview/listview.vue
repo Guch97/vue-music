@@ -123,7 +123,7 @@ created () {
         // }
         // this.fixedTop=fixedTop
         this.$refs.fixed.style.transform=`translate3d(0,${fixedTop}px,0)`
-    }
+    },
   },
   data() {
     return {
@@ -133,6 +133,10 @@ created () {
     };
   },
   methods: {
+    refresh(){
+      
+      this.$refs.listView.refresh()
+    },
     //点击滚动
     onShortcutTouchStart(e){
       let anchorIndex=getData(e.target,'index')
