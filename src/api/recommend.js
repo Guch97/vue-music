@@ -40,21 +40,42 @@ export function getRecommend() {
 }
 
 
-
-export function getDisclist(){
- const url = '/api/getDisclist'
- const data=Object.assign({},commonParams, {
-      platform: 'yqq',
-      sin: 0,
-      ein: 29,
-      sortId: 5,
-      categoryId: 10000000,
-      rnd: Math.random(),
-      inCharset: 'utf-8',
- })
+//歌曲推荐
+export function getDisclist() {
+    const url = '/api/getDisclist'
+    const data = Object.assign({}, commonParams, {
+        platform: 'yqq',
+        sin: 0,
+        ein: 29,
+        sortId: 5,
+        categoryId: 10000000,
+        rnd: Math.random(),
+        inCharset: 'utf-8',
+    })
     return axios.get(url, {
-       params: data
+        params: data
     }).then((res) => {
-      return res.data
-  })
+        return res.data
+    })
+}
+
+//推荐页歌单详情
+export function getRecommendlist(disstid) {
+    console.log(disstid)
+    const url = '/api/getCdInfo'
+    const data = Object.assign({}, commonParams, {
+        disstid,
+        type: 1,
+        json: 1,
+        utf8: 1,
+        onlysong: 0,
+        platform: 'yqq',
+        hostUin: 0,
+        needNewCode: 0
+    })
+    return axios.get(url, {
+        params: data
+    }).then((res) => {
+        return res.data
+    })
 }

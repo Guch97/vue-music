@@ -31,9 +31,9 @@ export default class Song {
         })
     }
 }
-
+//singer 页歌曲
 export function createSong(musicData) {
-    const { id, mid, singer, name, album, interval, url } = musicData
+    const { id, mid, singer, name, album, interval } = musicData
     return new Song({
         id,
         mid,
@@ -42,10 +42,23 @@ export function createSong(musicData) {
         album: name,
         duration: interval,
         image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${album.mid}.jpg?max_age=2592000`,
-        url
-        // url: `http://ws.stream.qqmusic.qq.com/${id}.m4a?fromtag=46`
-        // http://dl.stream.qqmusic.qq.com/C400${songmid}.m4a?guid=7347620869&vkey=${vkey}&uin=0&fromtag=66
-        // url: `http://ws.stream.qqmusic.qq.com/C100${mid}.m4a?fromtag=0&guid=126548448`
+        url: musicData.url
+            // url: `http://ws.stream.qqmusic.qq.com/${id}.m4a?fromtag=46`
+            // http://dl.stream.qqmusic.qq.com/C400${songmid}.m4a?guid=7347620869&vkey=${vkey}&uin=0&fromtag=66
+            // url: `http://ws.stream.qqmusic.qq.com/C100${mid}.m4a?fromtag=0&guid=126548448`
+    })
+}
+//推荐页歌曲
+export function creatRecommendeSong(musicData) {
+    return new Song({
+        id: musicData.songid,
+        mid: musicData.songmid,
+        singer: filterSinger(musicData.singer),
+        name: musicData.songname,
+        album: musicData.albumname,
+        duration: musicData.interval,
+        image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
+        url: musicData.url
     })
 }
 
@@ -64,14 +77,20 @@ export function isValidMusic(musicData) {
     return musicData.id && musicData.album.mid && (!musicData.pay || musicData.pay.price_album === 0)
 }
 
+export function isValidRecommendMusic(musicData) {
+    return musicData.albumid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0)
+}
+
 
 //获取歌手url
 export function processSongsUrl(songs) {
+    console.log('songs', songs)
     if (!songs.length) {
         return Promise.resolve(songs)
     }
     return getSongsUrl(songs).then((purlMap) => {
         songs = songs.filter((song) => {
+
             const purl = purlMap[song.mid]
             if (purl) {
                 song.url = purl.indexOf('http') === -1 ? `http://dl.stream.qqmusic.qq.com/${purl}` : purl

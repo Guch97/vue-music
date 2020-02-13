@@ -5,32 +5,42 @@ import Singer from 'views/singer/singer.vue';
 import Rank from 'views/rank/rank.vue';
 import Search from 'views/search/search.vue';
 import SingerDetail from 'views/singer-detail/singer-detail.vue'
+import Disc from 'views/recommend-disc/disc.vue'
+import rankTopList from 'views/rank-top-list/rank-top-list.vue'
+
+
 
 
 Vue.use(VueRouter)
 
 const routes = [{
     path: '/',
-    redirect: '/recommend'
+    redirect: '/recommend',
 }, {
     path: '/recommend',
-    component: Recommend
+    component: Recommend,
+    children: [{
+        path: '/recommend/:id',
+        component: Disc
+    }]
 }, {
     path: '/singer',
     component: Singer,
-    children:[
-      {
-        path:':id',
-        component:SingerDetail
-      }
-    ]
+    children: [{
+        path: ':id',
+        component: SingerDetail
+    }]
 }, {
     path: '/rank',
-    component: Rank
+    component: Rank,
+    children: [{
+        path: ':id',
+        component: rankTopList
+    }]
 }, {
     path: '/search',
     component: Search,
-   
+
 }]
 
 const router = new VueRouter({

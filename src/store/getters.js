@@ -1,5 +1,7 @@
 const getters = {
     singer: state => state.singer.singer,
+    disc: state => state.disc.disc,
+    topList: state => state.TopList.topList,
 
     playing: state => state.play.playing,
     fullScreen: state => state.play.fullScreen,

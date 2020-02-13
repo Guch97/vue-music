@@ -49,12 +49,9 @@ export function getSingerList() {
     return jsonp(url, data, options)
 }
 
-
 //歌手列表详情
-
 export const getSingerDetail = (singerMid) => {
     const url = '/api/getSingerDetail'
-
     const params = {
         ...commonParams,
         '-': 'getSingerSong29843273505889334',

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import singer from 'store/modules/singer.js'
 import play from 'store/modules/play.js'
+import disc from 'store/modules/disc.js'
+import TopList from 'store/modules/rank-top-list'
 import getters from 'store/getters'
 import createLogger from 'vuex/dist/logger'
 
@@ -11,6 +13,8 @@ const debug = process.env.NODE_ENV !== 'production'
 const store = new Vuex.Store({
     getters,
     modules: {
+        TopList,
+        disc,
         singer,
         play,
         strict: debug,

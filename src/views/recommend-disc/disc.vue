@@ -6,21 +6,20 @@
 
 <script type="text/ecmascript-6">
   import MusicList from 'components/music-list/music-list'
-  import { getSingerDetail } from 'api/singer'
   import { ERR_OK } from 'api/config'
-  import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
   import { mapGetters } from 'vuex'
-
+  import { creatRecommendeSong, isValidRecommendMusic, processSongsUrl } from 'common/js/song'
+  import {getRecommendlist} from 'api/recommend'
   export default {
     computed: {
       title() {
-        return this.singer.name
+        return this.disc.dissname
       },
       bgImage() {
-        return this.singer.avatar
+        return this.disc.imgurl
       },
       ...mapGetters([
-        'singer'
+        'disc'
       ])
     },
     data() {
@@ -28,31 +27,30 @@
         songs: []
       }
     },
-    created() {
-      this._getDetail()
+     created() {
+      this._getRecommendlist()
     },
     methods: {
-      _getDetail() {
-        if (!this.singer.id) {
-          this.$router.push('/singer')
+      _getRecommendlist() {
+        if (!this.disc.dissid) {
+          this.$router.push('/recommend')
           return
         }
-        getSingerDetail(this.singer.id).then((res) => {
+        getRecommendlist(this.disc.dissid).then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res)
-            processSongsUrl(this._normalizeSongs(res.singerSongList.data.songList)).then((songs) => {
+            processSongsUrl(this._normalizeSongs(res.cdlist[0].songlist)).then((songs) => {
               this.songs = songs
             })
           }
         })
       },
       _normalizeSongs(list) {
+        
         let ret = []
-        list.forEach((item) => {
-          let {songInfo} = item
-          if (isValidMusic(songInfo)) {
-            ret.push(createSong(songInfo))
-       
+        list.forEach((musicData) => {
+          if (isValidRecommendMusic(musicData)) {
+           
+            ret.push(creatRecommendeSong(musicData))
           }
         })
         return ret
