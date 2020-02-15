@@ -74,12 +74,17 @@ function filterSinger(singer) {
 }
 
 export function isValidMusic(musicData) {
-    return musicData.id && musicData.album.mid && (!musicData.pay || musicData.pay.price_album === 0)
+    if (musicData.id) {
+        return musicData.id && musicData.album.mid && (!musicData.pay || musicData.pay.price_album === 0)
+    } else {
+        return musicData.albumid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0)
+    }
+
 }
 
-export function isValidRecommendMusic(musicData) {
-    return musicData.albumid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0)
-}
+// export function isValidRecommendMusic(musicData) {
+//     return musicData.albumid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0)
+// }
 
 
 //获取歌手url

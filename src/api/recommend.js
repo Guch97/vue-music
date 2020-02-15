@@ -4,7 +4,7 @@ import axios from 'axios'
 // const debug = process.env.NODE_ENV !== 'development'
 
 export function getRecommend() {
-    // 线上环境地址，同学们根据自己的需要配置修改
+    // 线上环境地址，根据自己的需要配置修改
     const url = '/api/getTopBanner'
     const data = Object.assign({}, commonParams, {
         '-': 'recom' + (Math.random() + '').replace('0.', ''),

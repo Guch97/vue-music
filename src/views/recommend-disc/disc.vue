@@ -8,7 +8,7 @@
   import MusicList from 'components/music-list/music-list'
   import { ERR_OK } from 'api/config'
   import { mapGetters } from 'vuex'
-  import { creatRecommendeSong, isValidRecommendMusic, processSongsUrl } from 'common/js/song'
+  import { creatRecommendeSong, isValidMusic, processSongsUrl } from 'common/js/song'
   import {getRecommendlist} from 'api/recommend'
   export default {
     computed: {
@@ -48,8 +48,7 @@
         
         let ret = []
         list.forEach((musicData) => {
-          if (isValidRecommendMusic(musicData)) {
-           
+          if (isValidMusic(musicData)) {
             ret.push(creatRecommendeSong(musicData))
           }
         })
