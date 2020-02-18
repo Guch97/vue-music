@@ -50,6 +50,7 @@ export function createSong(musicData) {
 }
 //推荐页歌曲
 export function creatRecommendeSong(musicData) {
+    console.log('musicData', musicData)
     return new Song({
         id: musicData.songid,
         mid: musicData.songmid,
@@ -95,7 +96,6 @@ export function processSongsUrl(songs) {
     }
     return getSongsUrl(songs).then((purlMap) => {
         songs = songs.filter((song) => {
-
             const purl = purlMap[song.mid]
             if (purl) {
                 song.url = purl.indexOf('http') === -1 ? `http://dl.stream.qqmusic.qq.com/${purl}` : purl

@@ -63,6 +63,46 @@ const play = {
             commit('SET_CURRENT_INDEX', 0)
             commit('SET_FULL_SCREEN', true)
             commit('SET_PLAYING_STATE', true)
+        },
+        insertSong({ commit, state }, song) {
+            let playlist = state.playlist.slice()
+            let sequenceList = state.sequenceList
+            let currentIndex = state.currentIndex
+                //记录当前歌曲
+            let currentSong = playlist[currentIndex]
+                //查找当前列表中是否有要带插入的歌曲 并返回其索引
+            let fdIndex = findIndex(playlist, song)
+                //插入当前索引下一个
+            currentIndex++
+            playlist.splice(currentIndex, 0, song)
+                //如果已经包含这首歌
+            if (fdIndex > -1) {
+                //如果当前插入序号＞之前序号
+                if (currentIndex > fdIndex) {
+                    playlist.splice(fdIndex, 1)
+                    currentIndex--
+                } else {
+                    playlist.splice(fdIndex + 1, 1)
+                }
+            }
+            //获得插入位置
+            let currentSIndex = findIndex(sequenceList, currentSong) + 1
+            let fsIndex = findIndex(sequenceList, song)
+            sequenceList.splice(currentSIndex, 0, song)
+            if (fsIndex > -1) {
+                if (currentSIndex > fsIndex) {
+                    sequenceList.splice(fsIndex, 1)
+                    currentIndex--
+                } else {
+                    sequenceList.splice(fsIndex + 1, 1)
+                }
+            }
+            commit('SET_PLAYLIST', playlist)
+            commit('SET_SEQUENCE_LIST', sequenceList)
+            commit('SET_CURRENT_INDEX', currentIndex)
+            commit('SET_PLAYING_STATE', true)
+            commit('SET_FULL_SCREEN', true)
+
         }
     }
 }

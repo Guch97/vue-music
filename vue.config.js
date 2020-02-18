@@ -132,27 +132,57 @@ module.exports = {
             });
             //推荐页面歌单详情
             app.get('/api/getCdInfo', function(req, res) {
-                var url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+                    var url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+                    axios.get(url, {
+                        headers: {
+                            referer: 'https://c.y.qq.com/',
+                            host: 'c.y.qq.com'
+                        },
+                        params: req.query
+                    }).then((response) => {
+                        var ret = response.data
+                        if (typeof ret === 'string') {
+                            var reg = /^\w+\(({.+})\)$/
+                            var matches = ret.match(reg)
+                            if (matches) {
+                                ret = JSON.parse(matches[1])
+                            }
+                        }
+                        res.json(ret)
+                    }).catch((e) => {
+                        console.log(e)
+                    })
+                })
+                //热门搜索
+            app.get('/api/getHotKey', (req, res) => {
+                const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg';
                 axios.get(url, {
                     headers: {
-                        referer: 'https://c.y.qq.com/',
-                        host: 'c.y.qq.com'
+                        referer: 'https://u.y.qq.com/',
+                        host: 'u.y.qq.com'
                     },
                     params: req.query
-                }).then((response) => {
-                    var ret = response.data
-                    if (typeof ret === 'string') {
-                        var reg = /^\w+\(({.+})\)$/
-                        var matches = ret.match(reg)
-                        if (matches) {
-                            ret = JSON.parse(matches[1])
-                        }
-                    }
-                    res.json(ret)
-                }).catch((e) => {
-                    console.log(e)
-                })
-            })
+                }).then(response => {
+                    res.json(response.data);
+                }).catch(e => {
+                    console.log(e);
+                });
+            });
+            //搜索列表
+            app.get('/api/getHotSearch', (req, res) => {
+                const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+                axios.get(url, {
+                    headers: {
+                        referer: 'https://u.y.qq.com/',
+                        host: 'u.y.qq.com'
+                    },
+                    params: req.query
+                }).then(response => {
+                    res.json(response.data);
+                }).catch(e => {
+                    console.log(e);
+                });
+            });
         },
     },
     chainWebpack: (config) => {
@@ -164,5 +194,5 @@ module.exports = {
             .set('views', resolve('src/views'))
             .set('store', resolve('src/store'))
     },
-    publicPath: ''
+    publicPath: '/'
 }

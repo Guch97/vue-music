@@ -23,7 +23,13 @@ export default {
     listenScroll:{
       type:Boolean,
       default:false
+    },
+    //是否开启下拉刷新
+    pullup:{
+      type:Boolean,
+      default:false
     }
+
   },
   mounted(){
     setTimeout(()=>{
@@ -43,6 +49,15 @@ export default {
         let me=this
         this.scroll.on('scroll',(pos)=>{
           me.$emit('scroll',pos)
+        })
+      }
+      if(this.pullup){
+        //滚动停止scrollEnd
+        this.scroll.on('scrollEnd',()=>{
+          if(this.scroll.y<=(this.scroll.maxScrollY+50)){
+        //滚动到底部 scrollToEnd
+            this.$emit('scrollToEnd')
+          }
         })
       }
     },

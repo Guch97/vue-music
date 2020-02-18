@@ -45,7 +45,7 @@
         })
       },
       _normalizeSongs(list) {
-        
+        console.log(list)
         let ret = []
         list.forEach((musicData) => {
           if (isValidMusic(musicData)) {
