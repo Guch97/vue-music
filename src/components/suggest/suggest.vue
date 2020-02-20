@@ -3,6 +3,8 @@
     :data='result' 
     :pullup='pullup'
     @scrollToEnd='searchMore'
+    :befoeScroll='befoeScroll'
+    @befoeScroll='listScrollKeyUP'
     ref='suggest'
     >
    <ul class='suggest-list'>
@@ -16,6 +18,9 @@
       </li>
       <loading v-show='hasMore' titile=''></loading>
    </ul>
+   <div class='no-result-wrapper' v-show='!hasMore&&!result.length'>
+      <no-result title="抱歉,暂无搜索结果"></no-result>
+   </div>
 </scroll>
 </template>
 
@@ -28,6 +33,7 @@ import Loading from 'base/loading/loading'
 import Singer from 'common/js/singer'
 import {mapMutations} from 'vuex'
 import {mapActions} from 'vuex'
+import NoResult from 'base/no-result/no-result'
 
 
 const TYPE_SINGER = 'singer'
@@ -39,12 +45,14 @@ export default {
             page:1 ,
             result:[],
             pullup:true,
-            hasMore:true //是否加载完毕
+            hasMore:true, //是否加载完毕
+            befoeScroll:true
       }
    },
    components:{
       Scroll,
-      Loading
+      Loading,
+      NoResult
    },
    props:{
          query:{
@@ -81,6 +89,7 @@ export default {
             }else{
                this.insertSong(item)
             }
+            this.$emit('select')
          },
          getIconClass(item){
             if (item.type === TYPE_SINGER) {
@@ -155,6 +164,9 @@ export default {
              }
           })
             return ret
+         },
+         listScrollKeyUP(){
+            this.$emit('listScrollKeyUP')
          }
       },
 }

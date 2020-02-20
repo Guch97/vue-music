@@ -8,29 +8,44 @@
         <div class='hot-key'>
           <h1 class='title'>热门搜索</h1>
           <ul>
-            <li @click='addQuery(item.k)'  class="item"  v-for='item in Hotkey' :Key=item.id>
+            <li @click='addQuery(item.k)' class="item"  v-for='item in Hotkey' :Key=item.id>
               <span>{{item.k}}</span>
             </li>
           </ul>
         </div>
+        <div class='search-history' v-show='searchHistory.length'>
+          <h1 class='title'>
+            <span class='text'>搜索历史</span>
+            <span class='clear' @click='showConfirm'>
+              <i class='icon-clear'></i>
+            </span>
+          </h1>
+          <search-history :searches='searchHistory' @delete='deleteIcon'  @select='addQuery'></search-history>
+        </div>
       </div>
     </div>
     <div class='search-result'  v-show="query">
-      <suggest :query='query'></suggest>
+      <suggest @select='saveSearch' @listScrollKeyUP='blurInput' :query='query'></suggest>
     </div>
+     <confirm ref='confirm' @confirm='deleteAll' text='是否清空所有搜索历史' confirmBtnText='清空'></confirm>
     <router-view></router-view>
-  </div>
+  </template>
 </template>
 
 <script type="text/ecmascript-6">
 import SearchBox from 'base/search-box/search-box.vue'
+import SearchHistory from 'base/search-history/search-history'
+import Confirm from 'base/confirm/confirm'
 import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import Suggest from 'components/suggest/suggest'
+import {mapActions, mapGetters} from 'vuex'
 export default{
   components:{
     SearchBox,
-    Suggest
+    Suggest,
+    SearchHistory,
+    Confirm
   },
   data(){
     return{
@@ -38,10 +53,20 @@ export default{
         query:'',
     }
   },
+  computed:{
+      ...mapGetters([
+          'searchHistory',
+      ])
+  },
   created(){
     this._getHotKey()
   },
   methods:{
+    ...mapActions([
+      'saveSearchHistory',
+      'deleteSearchHistory',
+      'clearSearchHistory'
+    ]),
     _getHotKey(){
       getHotKey().then((res)=>{
         if(res.code===ERR_OK){
@@ -49,12 +74,28 @@ export default{
         }
       })
     },
+    deleteIcon(item){
+      this.deleteSearchHistory(item)
+    },
+    blurInput(){
+        this.$refs.searchBox.blur()  
+    },
+    
     addQuery(Query){
         this.$refs.searchBox.setQuery(Query)
     },
     onQueryChange(query){
       this.query=query
-
+    },
+    saveSearch(){
+      console.log(this.query)
+      this.saveSearchHistory(this.query)
+    },
+    deleteAll(){
+      this.clearSearchHistory()
+    },
+    showConfirm(){
+      this.$refs.confirm.show()
     }
   }
 }

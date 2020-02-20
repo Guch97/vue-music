@@ -28,6 +28,11 @@ export default {
     pullup:{
       type:Boolean,
       default:false
+    },
+    //滚动开始
+    beforeScroll:{
+      type:Boolean,
+      default:false
     }
 
   },
@@ -58,6 +63,11 @@ export default {
         //滚动到底部 scrollToEnd
             this.$emit('scrollToEnd')
           }
+        })
+      }
+      if(this.beforeScroll){
+        this.scroll.on('beforeScrollStart',()=>{
+          this.$emit('beforeScroll')
         })
       }
     },

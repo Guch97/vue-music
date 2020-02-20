@@ -1,12 +1,13 @@
 <template>
   <div class='search-box'>
     <i class='icon-search'></i>
-      <input class='box' :placeholder='placeholder' v-model='query'>
+      <input class='box' :placeholder='placeholder' v-model='query' ref='query'>
     <i v-show='query'  @click='clear' class='icon-dismiss'></i>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import {debounce} from 'common/js/utils.js'
 export default{
   props:{
     placeholder:{
@@ -25,13 +26,17 @@ export default{
     },
     setQuery(Query){
       this.query=Query
+    },
+    blur(){
+      this.$refs.query.blur()
     }
   },
   //使用created 派发而不是watch监听派发
+  //节流函数
   created() {
-    this.$watch('query',(newQuery)=>{
+    this.$watch('query',debounce((newQuery)=>{
         this.$emit('query',newQuery)
-    })
+    },200))
   },
 }
 </script>
