@@ -167,6 +167,9 @@ export default {
          },
          listScrollKeyUP(){
             this.$emit('listScrollKeyUP')
+         },
+         refresh(){  
+            this.$refs.suggest.refresh()
          }
       },
 }

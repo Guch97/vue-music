@@ -1,10 +1,11 @@
 <template>
-  <div class='search'>
-    <div class='search-box-wrapper'>
-      <search-box ref='searchBox' @query='onQueryChange'></search-box>
-    </div>
-    <div class="shortcut-wrapper" v-show='!query'>
-      <div class='shortcut'>
+<div class='search'>
+  <div class='search-box-wrapper'>
+    <search-box ref='searchBox' @query='onQueryChange'></search-box>
+  </div>
+  <div ref="shortcutWrapper" class="shortcut-wrapper" v-show='!query'>
+    <scroll class='shortcut' ref='shortcut' :data='shortcut'>
+      <div>
         <div class='hot-key'>
           <h1 class='title'>热门搜索</h1>
           <ul>
@@ -22,14 +23,15 @@
           </h1>
           <search-history :searches='searchHistory' @delete='deleteIcon'  @select='addQuery'></search-history>
         </div>
-      </div>
-    </div>
-    <div class='search-result'  v-show="query">
-      <suggest @select='saveSearch' @listScrollKeyUP='blurInput' :query='query'></suggest>
-    </div>
-     <confirm ref='confirm' @confirm='deleteAll' text='是否清空所有搜索历史' confirmBtnText='清空'></confirm>
-    <router-view></router-view>
-  </template>
+      </div>  
+    </scroll>
+  </div>
+  <div ref="searchResult"  class='search-result'  v-show="query">
+    <suggest ref='suggest' @select='saveSearch' @listScrollKeyUP='blurInput' :query='query'></suggest>
+  </div>
+    <confirm ref='confirm' @confirm='deleteAll' text='是否清空所有搜索历史' confirmBtnText='清空'></confirm>
+  <router-view></router-view>
+</div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -40,12 +42,17 @@ import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import Suggest from 'components/suggest/suggest'
 import {mapActions, mapGetters} from 'vuex'
+import Scroll from 'base/scroll/scroll'
+import {playlistMixin} from 'common/js/mixin'
 export default{
+  //定义一部分公共的方法或者计算属性,然后混入到各个组件中使用,方便管理与统一修改
+  mixins:[playlistMixin],  
   components:{
     SearchBox,
     Suggest,
     SearchHistory,
-    Confirm
+    Confirm,
+    Scroll
   },
   data(){
     return{
@@ -53,10 +60,22 @@ export default{
         query:'',
     }
   },
+  watch:{
+    query(newQuery){
+      if(!newQuery){
+        setTimeout(()=>{
+            this.$refs.shortcut.refresh()
+        },20)
+      }
+    }
+  },
   computed:{
       ...mapGetters([
           'searchHistory',
-      ])
+      ]),
+      shortcut(){
+        return this.Hotkey.concat(this.searchHistory)
+      }
   },
   created(){
     this._getHotKey()
@@ -88,7 +107,6 @@ export default{
       this.query=query
     },
     saveSearch(){
-      console.log(this.query)
       this.saveSearchHistory(this.query)
     },
     deleteAll(){
@@ -96,6 +114,13 @@ export default{
     },
     showConfirm(){
       this.$refs.confirm.show()
+    },
+    handlePlaylist(playlist){
+      const bottom=playlist.length>0?'60px':''
+      this.$refs.shortcutWrapper.style.bottom=bottom
+      this.$refs.shortcut.refresh()
+      this.$refs.searchResult.style.bottom=bottom
+      this.$refs.suggest.refresh()
     }
   }
 }

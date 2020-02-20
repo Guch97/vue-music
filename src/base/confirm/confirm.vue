@@ -1,6 +1,6 @@
 <template>
-  <transition name="confirm-fade" v-show='showFlag'>
-    <div class="confirm" >
+  <transition name="confirm-fade">
+    <div class="confirm"  v-show="showFlag" >
       <div class="confirm-wrapper">
         <div class="confirm-content">
           <p class="text">{{text}}</p>
@@ -36,7 +36,7 @@
       }
     },
     methods: {
-        show(){
+       show(){
           this.showFlag=true
         },
         hide(){
@@ -50,7 +50,7 @@
           this.$emit('confirm')
         }
       }
-  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
