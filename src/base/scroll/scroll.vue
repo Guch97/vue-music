@@ -33,8 +33,13 @@ export default {
     beforeScroll:{
       type:Boolean,
       default:false
+    },
+    //新版本better-scroll 已不需要
+    //新版本自动监听DOM变化自动refresh
+    refreshDelay:{
+      type:Number,
+      default:20
     }
-
   },
   mounted(){
     setTimeout(()=>{
@@ -93,7 +98,7 @@ export default {
     data(){
       setTimeout(()=>{
       this.refresh()
-    },20)
+    },this.refreshDelay)
     }
   }
 }

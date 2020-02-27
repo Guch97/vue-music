@@ -43,10 +43,10 @@ import {ERR_OK} from 'api/config'
 import Suggest from 'components/suggest/suggest'
 import {mapActions, mapGetters} from 'vuex'
 import Scroll from 'base/scroll/scroll'
-import {playlistMixin} from 'common/js/mixin'
+import {playlistMixin,searchMixin} from 'common/js/mixin'
 export default{
   //定义一部分公共的方法或者计算属性,然后混入到各个组件中使用,方便管理与统一修改
-  mixins:[playlistMixin],  
+  mixins:[playlistMixin,searchMixin],  
   components:{
     SearchBox,
     Suggest,
@@ -82,8 +82,8 @@ export default{
   },
   methods:{
     ...mapActions([
-      'saveSearchHistory',
-      'deleteSearchHistory',
+      // 'saveSearchHistory',
+      // 'deleteSearchHistory',
       'clearSearchHistory'
     ]),
     _getHotKey(){
@@ -96,19 +96,18 @@ export default{
     deleteIcon(item){
       this.deleteSearchHistory(item)
     },
-    blurInput(){
-        this.$refs.searchBox.blur()  
-    },
-    
-    addQuery(Query){
-        this.$refs.searchBox.setQuery(Query)
-    },
+    // blurInput(){
+    //     this.$refs.searchBox.blur()  
+    // },
+    // addQuery(Query){
+    //     this.$refs.searchBox.setQuery(Query)
+    // },
     onQueryChange(query){
       this.query=query
     },
-    saveSearch(){
-      this.saveSearchHistory(this.query)
-    },
+    // saveSearch(){
+    //   this.saveSearchHistory(this.query)
+    // },
     deleteAll(){
       this.clearSearchHistory()
     },

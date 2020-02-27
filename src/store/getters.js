@@ -3,7 +3,7 @@ const getters = {
     disc: state => state.disc.disc,
     topList: state => state.TopList.topList,
     searchHistory: state => state.searchHistory.searchHistory,
-
+    playHistory: state => state.searchHistory.playHistory,
     playing: state => state.play.playing,
     fullScreen: state => state.play.fullScreen,
     playlist: state => state.play.playlist,

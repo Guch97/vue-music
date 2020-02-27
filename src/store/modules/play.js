@@ -6,13 +6,14 @@ const play = {
     state: {
         playing: false,
         fullScreen: false,
-        //播放列表
+        //当前播放的歌曲列表  随机播放的是放在 playList 里
         playlist: [],
-        //顺序列表
+        //顺序播放的歌曲列表
         sequenceList: [],
         mode: playMode.sequence,
         //播放索引
-        currentIndex: -1
+        currentIndex: -1,
+
 
     },
     mutations: {
@@ -56,7 +57,7 @@ const play = {
         },
         //随机播放
         randomPlay({ commit }, { list }) {
-            commit('SET_PLAY_MODE,', playMode.random)
+            commit('SET_PLAY_MODE', playMode.random)
             commit('SET_SEQUENCE_LIST', list)
             let randomList = shuffle(list)
             commit('SET_PLAYLIST', randomList)
@@ -102,8 +103,40 @@ const play = {
             commit('SET_CURRENT_INDEX', currentIndex)
             commit('SET_PLAYING_STATE', true)
             commit('SET_FULL_SCREEN', true)
+        },
+        //favroite删除歌曲
+        deleteSong({ commit, state }, song) {
+            let playlist = state.playlist.slice()
+            let sequenceList = state.sequenceList
+            let currentIndex = state.currentIndex
+            let Pindex = findIndex(playlist, song)
+            console.log('Pindex', Pindex)
+            playlist.splice(Pindex, 1)
+            let sIndex = findIndex(sequenceList, song)
+            console.log('sIndex', sIndex)
+            sequenceList.splice(sIndex, 1)
+            if (currentIndex > Pindex || currentIndex === playlist.length) {
+                currentIndex--
+            }
+            commit('SET_PLAYLIST', playlist)
+            commit('SET_SEQUENCE_LIST', sequenceList)
+            commit('SET_CURRENT_INDEX', currentIndex)
+            commit('SET_PLAYING_STATE', true)
+            const playingState = playlist.length > 0
+
+            commit('SET_PLAYING_STATE', playingState)
+
+        },
+        //删除所有
+        deleteSongAll({ commit }) {
+            commit('SET_PLAYLIST', [])
+            commit('SET_SEQUENCE_LIST', [])
+            commit('SET_CURRENT_INDEX', -1)
+            commit('SET_PLAYING_STATE', false)
 
         }
+
+
     }
 }
 

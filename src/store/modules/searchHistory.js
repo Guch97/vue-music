@@ -1,16 +1,19 @@
-import { saveSearch, loadSearch, deleteSearch, clearSearch } from 'common/js/catch.js'
+import { saveSearch, loadSearch, deleteSearch, clearSearch, savePlay, loadPlay } from 'common/js/catch.js'
 
 
 const History = {
     state: {
         searchHistory: loadSearch(),
-
+        playHistory: loadPlay()
     },
     mutations: {
         SET_SEARCH_HISTOYR(state, history) {
             state.searchHistory = history
             console.log(state.searchHistory)
         },
+        SET_PLAY_HISTORY(state, history) {
+            state.playHistory = history
+        }
 
     },
     actions: {
@@ -22,6 +25,9 @@ const History = {
         },
         clearSearchHistory({ commit }) {
             commit('SET_SEARCH_HISTOYR', clearSearch())
+        },
+        savePlay({ commit }, song) {
+            commit('SET_PLAY_HISTORY', savePlay(song))
         }
     }
 }
