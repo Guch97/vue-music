@@ -39,7 +39,7 @@
         }
         getSingerDetail(this.singer.id).then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res)
+          
             processSongsUrl(this._normalizeSongs(res.singerSongList.data.songList)).then((songs) => {
               this.songs = songs
             })

@@ -22,9 +22,7 @@
       }
     },
     watch: {
-      searches(newVal){
-        console.log(newVal)
-      }
+     
     },
     methods: {
       selectItem(item){

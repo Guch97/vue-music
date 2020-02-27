@@ -90,15 +90,11 @@
          this.saveSearch()
       },
       switchItem(index){
-        console.log(index)
-         this.$refs.topTitle.show()
         this.currentIndex=index
       },
       selectSong(song,index){
         if(index!==0){
           //song是个对象转化为实例
-          console.log('song',song)
-          console.log(new Song(song))
           // this.insertSong(song)
           this.insertSong(new Song(song))
           this.$refs.topTitle.show()

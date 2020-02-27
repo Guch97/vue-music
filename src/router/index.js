@@ -7,6 +7,7 @@ import Search from 'views/search/search.vue';
 import SingerDetail from 'views/singer-detail/singer-detail.vue'
 import Disc from 'views/recommend-disc/disc.vue'
 import rankTopList from 'views/rank-top-list/rank-top-list.vue'
+import UserCenter from 'views/user-center/user-center.vue'
 
 
 
@@ -43,7 +44,10 @@ const routes = [{
     children: [{
         path: ':id',
         component: SingerDetail
-    }]
+    }],
+}, {
+    path: '/user',
+    component: UserCenter
 }]
 
 const router = new VueRouter({

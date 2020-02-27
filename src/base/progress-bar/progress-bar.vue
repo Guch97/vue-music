@@ -86,7 +86,7 @@ export default {
         const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
         //当前位置/进度条总长度
         const percent=this.$refs.progress.clientWidth/barWidth
-        console.log(percent)
+      
         this.$emit('percentChange',percent)
     }
   },

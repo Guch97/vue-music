@@ -70,7 +70,7 @@
         this.$router.push({
           path:`/recommend/${item.dissid}`
         })
-        console.log(item)
+     
         this.setDisc(item)
       },
       handlePlaylist(playlist){
@@ -88,7 +88,7 @@
       _getDisclist(){
         getDisclist().then((res)=>{
            if (res.code === ERR_OK) {
-            console.log(res)
+          
           this.discList=res.data.list
           }
         })

@@ -110,10 +110,10 @@ const play = {
             let sequenceList = state.sequenceList
             let currentIndex = state.currentIndex
             let Pindex = findIndex(playlist, song)
-            console.log('Pindex', Pindex)
+
             playlist.splice(Pindex, 1)
             let sIndex = findIndex(sequenceList, song)
-            console.log('sIndex', sIndex)
+
             sequenceList.splice(sIndex, 1)
             if (currentIndex > Pindex || currentIndex === playlist.length) {
                 currentIndex--
@@ -144,6 +144,7 @@ export default play
 
 
 function findIndex(list, song) {
+
     return list.findIndex((item) => {
         return item.id === song.id
     })

@@ -61,7 +61,7 @@ export function getDisclist() {
 
 //推荐页歌单详情
 export function getRecommendlist(disstid) {
-    console.log(disstid)
+    
     const url = '/api/getCdInfo'
     const data = Object.assign({}, commonParams, {
         disstid,

@@ -50,7 +50,7 @@ export function createSong(musicData) {
 }
 //推荐页歌曲
 export function creatRecommendeSong(musicData) {
-    console.log('musicData', musicData)
+
     return new Song({
         id: musicData.songid,
         mid: musicData.songmid,
@@ -90,7 +90,7 @@ export function isValidMusic(musicData) {
 
 //获取歌手url
 export function processSongsUrl(songs) {
-    console.log('songs', songs)
+
     if (!songs.length) {
         return Promise.resolve(songs)
     }

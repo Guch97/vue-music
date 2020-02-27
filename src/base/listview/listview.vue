@@ -102,10 +102,10 @@ created () {
       for(let i=0;i<listHeight.length-1;i++){
         //元素上高度
         let height1=listHeight[i]
-        console.log('height1',height1)
+        
         //元素下高度
         let height2=listHeight[i+1]
-        console.log('height2',height2)
+       
         if(-newY>=height1&&-newY<height2){
           this.currentIndex=i
           this.diff=height2+newY

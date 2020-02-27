@@ -71,7 +71,7 @@
             <i @click='next' class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i  class="icon-not-favorite" ></i>
+            <i   @click='toggleFavorite(currentSong)' :class='getFavoriteIcon(currentSong)' ></i>
           </div>
         </div>
       </div>
@@ -185,14 +185,18 @@ watch:{
     }
     if(this.currentLyric){
       this.currentLyric.stop()
+      this.currentTime=0
+      this.playingLyric=''
+      this.currentLineNum=0
     }
+    clearTimeout(this.timer)
     // this.$nextTick(()=>{
     //    this.$refs.audio.play()
     //    this.getLyric()
     // })
   //因为手机微信运行时从后台切换到前台时不执行js，要保证歌曲重新播放，使用 setTimeOut去代替nextTick
-      setTimeout(()=>{
-        this.$refs.audio.play();
+     this.timer=setTimeout(()=>{
+        this.$refs.audio.play()
         this.getLyric()
       },1000)
   },
@@ -236,6 +240,7 @@ methods: {
     //当只有一首歌曲的时候，当点击下一首或者上一首时，让歌曲循环播放 在prev() 和next方法中都加上
     if(this.playlist.length===1){
       this.loop()
+      return
     }else{
        let index=this.currentIndex+1
        if(index===this.playlist.length){
@@ -264,8 +269,11 @@ methods: {
   },
   getLyric(){
         this.currentSong.getSongLyric().then((lyric)=>{
+          //异步加载 缓冲
+         if (this.currentSong.lyric !== lyric) {
+            return
+          }
         this.currentLyric=new Lyric(lyric,this.handleLyric)
-        console.log(this.currentLyric)
        if(this.playing){
          this.currentLyric.play()
        }
@@ -397,7 +405,6 @@ methods: {
         this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
         this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
         this.$refs.lyricList.$el.style[transitionDuration] = 0
-        console.log(this.touch.percent)
         this.$refs.middleL.style['opacity'] = 1 - this.touch.percent
         this.$refs.middleL.style[transitionDuration] = 0
       },
